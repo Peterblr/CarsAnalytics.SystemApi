@@ -1,0 +1,6 @@
+@CarsAnalytics.SystemApi_HostAddress = http://localhost:5247
+
+GET {{CarsAnalytics.SystemApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
