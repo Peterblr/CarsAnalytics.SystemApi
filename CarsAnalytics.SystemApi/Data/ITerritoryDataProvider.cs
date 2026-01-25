@@ -18,4 +18,11 @@ public interface ITerritoryDataProvider
     /// <param name="territories">A collection of <see cref="Territory"/> objects to be inserted.</param> 
     /// <returns> A collection of <see cref="Territory"/> objects that were successfully created. </returns>
     Task<IEnumerable<Territory>> CreateManyAsync(IEnumerable<Territory> territories);
+
+    /// <summary> 
+    /// Deletes territories by their unique code. 
+    /// </summary> 
+    /// <param name="code">The territory code (e.g., "CA", "NY").</param> 
+    /// <returns>The number of records affected (0 if no territory was found with the given code).</returns>
+    Task<int> DeleteManyByCodesAsync(IEnumerable<string> codes);
 }

@@ -73,6 +73,25 @@ public class TerritoryService(ITerritoryDataProvider provider) : ITerritoryServi
         return successResponse;
     }
 
+    public async Task<ApiResponse<bool>> DeleteManyByCodesAsync(IEnumerable<string> codes)
+    {
+        if (codes == null || !codes.Any())
+        {
+            return ApiResponse<bool>.CreateFailureResponse("At least one code is required", HttpStatusCode.BadRequest);
+        }
+
+        var affected = await provider.DeleteManyByCodesAsync(codes);
+
+        if (affected == 0)
+        {
+            return ApiResponse<bool>.CreateFailureResponse("No territories found for provided codes", HttpStatusCode.NotFound);
+        }
+
+        var response = ApiResponse<bool>.CreateSuccessResponse(true, null, HttpStatusCode.NoContent);
+        response.Message = $"Deleted {affected} territories successfully";
+        return response;
+    }
+
     private async Task<bool> ValidateInput(IEnumerable<TerritoryDto> dtos, ApiResponse<IEnumerable<TerritoryDto>> response)
     {
         if (dtos.Any(x => x is null))

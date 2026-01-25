@@ -50,4 +50,12 @@ public class TerritoryDataProvider(IConfiguration configuration) : ITerritoryDat
 
         return created;
     }
+
+    public async Task<int> DeleteManyByCodesAsync(IEnumerable<string> codes)
+    {
+        const string DeleteQuery = @" DELETE FROM Territories WHERE Code IN @Codes;";
+        using var con = new SqlConnection(GetConnectionString());
+        var affected = await con.ExecuteAsync(DeleteQuery, new { codes });
+        return affected;
+    }
 }
