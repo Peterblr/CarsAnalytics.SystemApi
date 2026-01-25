@@ -35,9 +35,13 @@ public class TerritoriesController(ITerritoryService territoryService) : Control
     {
     }
 
-    // DELETE api/<TerritoriesController>/5
-    [HttpDelete("{id}")]
-    public void Delete(int id)
+    [HttpDelete]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Territories deleted", typeof(ApiResponse<bool>))]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "No codes provided")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "No territories found for provided codes")]
+    public async Task<IActionResult> DeleteMany([FromBody] IEnumerable<string> codes)
     {
+        var apiResponse = await territoryService.DeleteManyByCodesAsync(codes);
+        return StatusCode((int)apiResponse.StatusCode, apiResponse);
     }
 }
