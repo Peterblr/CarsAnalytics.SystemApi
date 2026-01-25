@@ -15,14 +15,18 @@ public class TerritoriesController(ITerritoryService territoryService) : Control
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Region code is required or invalid")]
     public async Task<IActionResult> Get(string regionCode)
     {
-        var apiResponse = await territoryService.GetTerritoriesAsync(regionCode);
+        var apiResponse = await territoryService.GetAllAsync(regionCode);
         return StatusCode((int)apiResponse.StatusCode, apiResponse);
     }
 
-    // POST api/<TerritoriesController>
     [HttpPost]
-    public void Post([FromBody] string value)
+    [SwaggerResponse(StatusCodes.Status201Created, "Territories created", typeof(ApiResponse<IEnumerable<TerritoryDto>>))]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid input")]
+    [SwaggerResponse(StatusCodes.Status409Conflict, "Duplicate territories found", typeof(ApiResponse<IEnumerable<TerritoryDto>>))]
+    public async Task<IActionResult> PostMany([FromBody] IEnumerable<TerritoryDto> dtos)
     {
+        var apiResponse = await territoryService.CreateManyAsync(dtos);
+        return StatusCode((int)apiResponse.StatusCode, apiResponse);
     }
 
     // PUT api/<TerritoriesController>/5

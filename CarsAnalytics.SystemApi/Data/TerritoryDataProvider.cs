@@ -8,7 +8,10 @@ public class TerritoryDataProvider(IConfiguration configuration) : ITerritoryDat
 {
     private const string ConName = "Default";
 
-    private string GetConnectionString() => configuration.GetConnectionString(ConName);
+    private string GetConnectionString()
+    {
+        return configuration.GetConnectionString(ConName);
+    }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Territory>> GetByRegionAsync(string regionCode)
@@ -20,5 +23,31 @@ public class TerritoryDataProvider(IConfiguration configuration) : ITerritoryDat
 
         using var con = new SqlConnection(GetConnectionString());
         return await con.QueryAsync<Territory>(GetAllQuery, new { RegionCode = regionCode });
+    }
+
+    public async Task<IEnumerable<Territory>> CreateManyAsync(IEnumerable<Territory> territories)
+    {
+        const string InsertQuery = @"
+            INSERT INTO Territories (Code, Name, RegionCode)
+            OUTPUT INSERTED.*
+            VALUES (@Code, @Name, @RegionCode);
+        ";
+
+        using var con = new SqlConnection(GetConnectionString());
+        await con.OpenAsync();
+
+        using var transaction = await con.BeginTransactionAsync();
+
+        var created = new List<Territory>();
+
+        foreach (var t in territories)
+        {
+            var inserted = await con.QuerySingleAsync<Territory>(InsertQuery, t, transaction);
+            created.Add(inserted);
+        }
+
+        await transaction.CommitAsync();
+
+        return created;
     }
 }

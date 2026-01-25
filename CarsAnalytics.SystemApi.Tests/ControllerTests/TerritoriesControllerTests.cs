@@ -28,7 +28,7 @@ public class TerritoriesControllerTests
         var response = ApiResponse<IEnumerable<TerritoryDto>>
             .CreateFailureResponse("Region code is required", HttpStatusCode.BadRequest);
 
-        _service.GetTerritoriesAsync("XX").Returns(response);
+        _service.GetAllAsync("XX").Returns(response);
 
         // Act
         var result = await _controller.Get("XX") as ObjectResult;
@@ -51,7 +51,7 @@ public class TerritoriesControllerTests
         var response = ApiResponse<IEnumerable<TerritoryDto>>
             .CreateSuccessResponse(territories);
 
-        _service.GetTerritoriesAsync("AB").Returns(response);
+        _service.GetAllAsync("AB").Returns(response);
 
         // Act
         var result = await _controller.Get("AB") as ObjectResult;

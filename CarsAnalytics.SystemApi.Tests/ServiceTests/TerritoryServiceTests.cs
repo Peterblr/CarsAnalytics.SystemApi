@@ -24,7 +24,7 @@ public class TerritoryServiceTests
     public async Task GetTerritoriesAsync_ShouldReturnBadRequest_WhenRegionCodeIsNullOrEmpty()
     {
         // Act
-        var response = await _service.GetTerritoriesAsync("");
+        var response = await _service.GetAllAsync("");
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
@@ -35,7 +35,7 @@ public class TerritoryServiceTests
     public async Task GetTerritoriesAsync_ShouldReturnBadRequest_WhenRegionCodeIsInvalid()
     {
         // Act
-        var response = await _service.GetTerritoriesAsync("123");
+        var response = await _service.GetAllAsync("123");
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
@@ -54,7 +54,7 @@ public class TerritoryServiceTests
         _provider.GetByRegionAsync("AB").Returns(territories);
 
         // Act
-        var response = await _service.GetTerritoriesAsync("AB");
+        var response = await _service.GetAllAsync("AB");
 
         // Assert
         response.Data.Should().BeEquivalentTo(territories);
