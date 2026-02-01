@@ -5,7 +5,6 @@
 <!-- PROJECT_TREE_START -->
 ## CarsAnalytics.SystemApi  
 CarsAnalytics.SystemApi  
-CarsAnalytics.SystemApi  
 ├── CarsAnalytics.SystemApi.csproj  
 ├── CarsAnalytics.SystemApi.http  
 ├── Controllers  
@@ -36,7 +35,6 @@ CarsAnalytics.SystemApi
 9 directories, 18 files  
   
 ## CarsAnalytics.SystemApi.Tests  
-CarsAnalytics.SystemApi.Tests  
 CarsAnalytics.SystemApi.Tests  
 ├── CarsAnalytics.SystemApi.Tests.csproj  
 ├── ControllerTests  
