@@ -2,7 +2,7 @@ name: Update Project Structure
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ develop, master ]
   workflow_dispatch:
 
 jobs:
@@ -49,10 +49,10 @@ jobs:
 
           mv README_new.md README.md
 
-      # Commit changes
+      # Commit changes to the SAME branch where workflow was triggered
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "Update project structure"
           file_pattern: README.md
-          branch: develop
+          branch: ${{ github.ref_name }}
