@@ -24,4 +24,8 @@
     <ProjectReference Include="..\CarsAnalytics.SystemApi\CarsAnalytics.SystemApi.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ForTestsOnly_Should_be_removed\" />
+  </ItemGroup>
+
 </Project>
