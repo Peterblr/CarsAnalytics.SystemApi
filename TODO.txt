@@ -1,0 +1,97 @@
+CarsAnalytics.SystemApi
+├── Controllers
+│   ├── TerritoriesController.cs                     ✔ DONE
+│   ├── RegionsController.cs                         ❗ TODO
+│   ├── CarModelsController.cs                       ❗ TODO
+│   ├── TerritoryCarStatsController.cs               ❗ TODO
+│   ├── UsersController.cs                           ❗ TODO (Admin panel)
+│   ├── AuthController.cs                            ❗ TODO (JWT login)
+│   └── RolesController.cs                           ❗ TODO
+│
+├── Data
+│   ├── ITerritoryDataProvider.cs                    ✔ DONE
+│   ├── TerritoryDataProvider.cs                     ✔ DONE
+│   ├── IRegionDataProvider.cs                       ❗ TODO
+│   ├── RegionDataProvider.cs                        ❗ TODO
+│   ├── ICarModelDataProvider.cs                     ❗ TODO
+│   ├── CarModelDataProvider.cs                      ❗ TODO
+│   ├── ITerritoryCarStatDataProvider.cs             ❗ TODO
+│   ├── TerritoryCarStatDataProvider.cs              ❗ TODO
+│   ├── IUserDataProvider.cs                         ❗ TODO
+│   ├── UserDataProvider.cs                          ❗ TODO
+│   ├── IRoleDataProvider.cs                         ❗ TODO
+│   └── RoleDataProvider.cs                          ❗ TODO
+│
+├── Domain
+│   ├── Territory.cs                                 ✔ DONE
+│   ├── Region.cs                                    ✔ DONE
+│   ├── CarModel.cs                                  ✔ DONE
+│   ├── TerritoryCarStat.cs                          ✔ DONE
+│   ├── User.cs                                      ❗ TODO
+│   └── Role.cs                                      ❗ TODO
+│
+├── Dto
+│   ├── TerritoryDto.cs                              ✔ DONE
+│   ├── TerritoryUpdateDto.cs                        ❗ TODO
+│   ├── RegionDto.cs                                 ❗ TODO
+│   ├── CarModelDto.cs                               ❗ TODO
+│   ├── TerritoryCarStatDto.cs                       ❗ TODO
+│   ├── UserDto.cs                                   ❗ TODO
+│   ├── LoginRequestDto.cs                           ❗ TODO
+│   ├── AuthResponseDto.cs                           ❗ TODO
+│   └── RoleDto.cs                                   ❗ TODO
+│
+├── Services
+│   ├── ITerritoryService.cs                         ✔ DONE
+│   ├── TerritoryService.cs                          ✔ DONE
+│   ├── IRegionService.cs                            ❗ TODO
+│   ├── RegionService.cs                             ❗ TODO
+│   ├── ICarModelService.cs                          ❗ TODO
+│   ├── CarModelService.cs                           ❗ TODO
+│   ├── ITerritoryCarStatService.cs                  ❗ TODO
+│   ├── TerritoryCarStatService.cs                   ❗ TODO
+│   ├── IUserService.cs                              ❗ TODO
+│   ├── UserService.cs                               ❗ TODO
+│   ├── IAuthService.cs                              ❗ TODO
+│   ├── AuthService.cs                               ❗ TODO
+│   ├── IRoleService.cs                              ❗ TODO
+│   └── RoleService.cs                               ❗ TODO
+│
+├── Validators
+│   ├── TerritoryValidator.cs                        ✔ DONE
+│   ├── RegionValidator.cs                           ❗ TODO
+│   ├── CarModelValidator.cs                         ❗ TODO
+│   ├── TerritoryCarStatValidator.cs                 ❗ TODO
+│   ├── UserValidator.cs                             ❗ TODO
+│   ├── AuthValidator.cs                             ❗ TODO
+│   └── RoleValidator.cs                             ❗ TODO
+
+CarsAnalytics.SystemApi.Tests
+├── CarsAnalytics.SystemApi.Tests.csproj
+│
+├── ControllerTests
+│   ├── TerritoriesControllerTests.cs                ✔ DONE
+│   ├── RegionsControllerTests.cs                    ❗ TODO
+│   ├── CarModelsControllerTests.cs                  ❗ TODO
+│   ├── TerritoryCarStatsControllerTests.cs          ❗ TODO
+│   ├── UsersControllerTests.cs                      ❗ TODO
+│   ├── AuthControllerTests.cs                       ❗ TODO
+│   └── RolesControllerTests.cs                      ❗ TODO
+│
+├── ServiceTests
+│   ├── TerritoryServiceTests.cs                     ✔ DONE
+│   ├── RegionServiceTests.cs                        ❗ TODO
+│   ├── CarModelServiceTests.cs                      ❗ TODO
+│   ├── TerritoryCarStatsServiceTests.cs             ❗ TODO
+│   ├── UsersServiceTests.cs                         ❗ TODO
+│   ├── AuthServiceTests.cs                          ❗ TODO
+│   └── RolesServiceTests.cs                         ❗ TODO
+│
+└── ValidatorTests
+    ├── TerritoryValidatorTests.cs                   ✔ DONE
+    ├── RegionValidatorTests.cs                      ❗ TODO
+    ├── CarModelValidatorTests.cs                    ❗ TODO
+    ├── TerritoryCarStatsValidatorTests.cs           ❗ TODO
+    ├── UsersValidatorTests.cs                       ❗ TODO
+    ├── AuthValidatorTests.cs                        ❗ TODO
+    └── RolesValidatorTests.cs                       ❗ TODO
