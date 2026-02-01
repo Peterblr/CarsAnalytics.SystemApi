@@ -1,5 +1,6 @@
 ﻿using CarsAnalytics.SystemApi.Data;
 using CarsAnalytics.SystemApi.Domain;
+using CarsAnalytics.SystemApi.Dto;
 using CarsAnalytics.SystemApi.Services;
 using FluentAssertions;
 using NSubstitute;
@@ -48,7 +49,7 @@ public class TerritoryServiceTests
         // Arrange
         var territories = new List<Territory>
         {
-            new Territory { Code = "T1", Name = "Test Territory", RegionCode = "AB" }
+            new Territory { Code = "TB", Name = "Test Territory", RegionCode = "AB" }
         };
 
         _provider.GetByRegionAsync("AB").Returns(territories);
@@ -61,5 +62,109 @@ public class TerritoryServiceTests
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.Message.Should().NotBeNullOrEmpty();
         response.Message.Should().Contain("successfully");
+    }
+
+    [Test]
+    public async Task CreateManyAsync_ShouldReturnBadRequest_WhenInputIsInvalid()
+    {
+        // Arrange
+        var invalidDtos = new List<TerritoryDto> { null };
+
+        // Act
+        var response = await _service.CreateManyAsync(invalidDtos);
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        Assert.That(response.Message, Is.EqualTo("At least one territory is required"));
+    }
+
+    [Test]
+    public async Task CreateManyAsync_ShouldReturnConflict_WhenDuplicatesExistInDatabase()
+    {
+        // Arrange
+        var dtos = new List<TerritoryDto>
+        {
+            new TerritoryDto { Code = "AC", Name = "TerritoryAC", RegionCode = "AB" }
+        };
+
+        var existingTerritories = new List<Territory>
+        {
+            new Territory { Code = "AC", Name = "TerritoryAC", RegionCode = "AB" }
+        };
+
+        _provider.GetByRegionAsync("AB").Returns(existingTerritories);
+
+        // Act
+        var response = await _service.CreateManyAsync(dtos);
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Conflict));
+        Assert.That(response.Message, Does.Contain("Duplicate Code in region"));
+    }
+
+    [Test]
+    public async Task CreateManyAsync_ShouldReturnCreated_WhenInputIsValid()
+    {
+        // Arrange
+        var dtos = new List<TerritoryDto>
+        {
+            new TerritoryDto { Code = "TB", Name = "Territory", RegionCode = "AB" }
+        };
+
+        var createdTerritories = new List<Territory>
+        {
+            new Territory { Code = "TB", Name = "Territory", RegionCode = "AB" }
+        };
+
+        _provider.GetByRegionAsync("AB").Returns(new List<Territory>());
+        _provider.CreateManyAsync(Arg.Any<IEnumerable<Territory>>()).Returns(createdTerritories);
+
+        // Act
+        var response = await _service.CreateManyAsync(dtos);
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Created));
+        Assert.That(response.Data, Is.Not.Empty);
+        Assert.That(response.Message, Does.Contain("created successfully"));
+    }
+
+    [Test]
+    public async Task DeleteManyByCodesAsync_ShouldReturnBadRequest_WhenCodesAreEmpty()
+    {
+        // Act
+        var response = await _service.DeleteManyByCodesAsync(new List<string>());
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        Assert.That(response.Message, Is.EqualTo("At least one code is required"));
+    }
+
+    [Test]
+    public async Task DeleteManyByCodesAsync_ShouldReturnNotFound_WhenNoTerritoriesDeleted()
+    {
+        // Arrange
+        _provider.DeleteManyByCodesAsync(Arg.Any<IEnumerable<string>>()).Returns(0);
+
+        // Act
+        var response = await _service.DeleteManyByCodesAsync(new List<string> { "TB" });
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        Assert.That(response.Message, Does.Contain("No territories found"));
+    }
+
+    [Test]
+    public async Task DeleteManyByCodesAsync_ShouldReturnNoContent_WhenTerritoriesDeleted()
+    {
+        // Arrange
+        _provider.DeleteManyByCodesAsync(Arg.Any<IEnumerable<string>>()).Returns(2);
+
+        // Act
+        var response = await _service.DeleteManyByCodesAsync(new List<string> { "TA", "TB" });
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+        Assert.That(response.Data, Is.True);
+        Assert.That(response.Message, Does.Contain("Deleted 2 territories successfully"));
     }
 }

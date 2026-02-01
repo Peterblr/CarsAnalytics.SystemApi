@@ -61,4 +61,85 @@ public class TerritoriesControllerTests
         Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
         Assert.That(result.Value, Is.EqualTo(response));
     }
+
+    [Test]
+    public async Task PostMany_ShouldReturnBadRequest_WhenInputIsInvalid()
+    {
+        // Arrange
+        var invalidDtos = new List<TerritoryDto> { null };
+        _service.CreateManyAsync(invalidDtos).Returns(
+            ApiResponse<IEnumerable<TerritoryDto>>.CreateFailureResponse("At least one territory is required", HttpStatusCode.BadRequest));
+
+        // Act
+        var result = await _controller.PostMany(invalidDtos) as ObjectResult;
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.BadRequest));
+        Assert.That(result.Value, Is.Not.Null);
+        var response = (ApiResponse<IEnumerable<TerritoryDto>>)result.Value;
+        Assert.That(response.Message, Is.EqualTo("At least one territory is required"));
+    }
+
+    [Test]
+    public async Task PostMany_ShouldReturnCreated_WhenInputIsValid()
+    {
+        // Arrange
+        var dtos = new List<TerritoryDto>
+        {
+            new TerritoryDto { Code = "TB", Name = "Territory1", RegionCode = "AB" }
+        };
+        var successResponse = ApiResponse<IEnumerable<TerritoryDto>>.CreateSuccessResponse(dtos, null, HttpStatusCode.Created);
+        successResponse.Message = "Territories created successfully (1 records)";
+        _service.CreateManyAsync(dtos).Returns(successResponse);
+
+        // Act
+        var result = await _controller.PostMany(dtos) as ObjectResult;
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.Created));
+        Assert.That(result.Value, Is.Not.Null);
+        var response = (ApiResponse<IEnumerable<TerritoryDto>>)result.Value;
+        Assert.That(response.Message, Does.Contain("created successfully"));
+        Assert.That(response.Data, Is.EquivalentTo(dtos));
+    }
+
+    [Test]
+    public async Task DeleteMany_ShouldReturnNotFound_WhenNoTerritoriesFound()
+    {
+        // Arrange
+        var codes = new List<string> { "AB", "BC" }; 
+        _service.DeleteManyByCodesAsync(codes).Returns(
+            ApiResponse<bool>.CreateFailureResponse("No territories found for provided codes", HttpStatusCode.NotFound));
+
+        // Act
+        var result = await _controller.DeleteMany(codes) as ObjectResult;
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.NotFound));
+        var response = (ApiResponse<bool>)result.Value;
+        Assert.That(response.Message, Is.EqualTo("No territories found for provided codes"));
+    }
+
+    [Test]
+    public async Task DeleteMany_ShouldReturnNoContent_WhenDeletionSucceeds()
+    {
+        // Arrange
+        var codes = new List<string> { "TA", "TB" };
+        var successResponse = ApiResponse<bool>.CreateSuccessResponse(true, null, HttpStatusCode.NoContent);
+        successResponse.Message = "Deleted 2 territories successfully";
+        _service.DeleteManyByCodesAsync(codes).Returns(successResponse);
+
+        // Act
+        var result = await _controller.DeleteMany(codes) as ObjectResult;
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.NoContent));
+        var response = (ApiResponse<bool>)result.Value;
+        Assert.That(response.Data, Is.True);
+        Assert.That(response.Message, Does.Contain("Deleted 2 territories successfully"));
+    }
 }
