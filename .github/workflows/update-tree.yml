@@ -2,7 +2,7 @@ name: Update Project Structure
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ develop, master ]
   workflow_dispatch:
 
 jobs:
@@ -15,34 +15,24 @@ jobs:
       - name: Install tree
         run: sudo apt-get update && sudo apt-get install -y tree
 
-      # Generate tree for main API project
-      - name: Generate tree for SystemApi
-        run: |
-          tree CarsAnalytics.SystemApi \
-            -a -I "bin|obj|Migrations" \
-            > tree_api_full.txt
-
-          grep -E "\.cs$|Controllers|DTO|Domain|Services" tree_api_full.txt \
-            > tree_api.txt
-
-      # Generate tree for Tests project
-      - name: Generate tree for Tests
-        run: |
-          tree CarsAnalytics.SystemApi.Tests \
-            -a -I "bin|obj" \
-            > tree_tests_full.txt
-
-          grep -E "\.cs$|Unit|Integration" tree_tests_full.txt \
-            > tree_tests.txt
-
-      # Combine both trees into one file
-      - name: Combine trees
+      # Generate tree for CarsAnalytics.SystemApi
+      - name: Generate tree for CarsAnalytics.SystemApi
         run: |
           echo "## CarsAnalytics.SystemApi" > filtered_tree.txt
-          cat tree_api.txt >> filtered_tree.txt
+          tree CarsAnalytics.SystemApi \
+            -a \
+            -I "bin|obj|Migrations|*.user|*.cache" \
+            >> filtered_tree.txt
+
+      # Generate tree for CarsAnalytics.SystemApi.Tests
+      - name: Generate tree for CarsAnalytics.SystemApi.Tests
+        run: |
           echo "" >> filtered_tree.txt
           echo "## CarsAnalytics.SystemApi.Tests" >> filtered_tree.txt
-          cat tree_tests.txt >> filtered_tree.txt
+          tree CarsAnalytics.SystemApi.Tests \
+            -a \
+            -I "bin|obj|*.user|*.cache" \
+            >> filtered_tree.txt
 
       # Insert into README.md
       - name: Insert into README.md
@@ -59,10 +49,10 @@ jobs:
 
           mv README_new.md README.md
 
-      # Commit changes
+      # Commit changes to the SAME branch where workflow was triggered
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "Update project structure"
           file_pattern: README.md
-          branch: develop
+          branch: ${{ github.ref_name }}
