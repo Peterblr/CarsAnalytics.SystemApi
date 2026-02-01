@@ -34,9 +34,11 @@ CarsAnalytics.SystemApi.Tests
 ├── CarsAnalytics.SystemApi.Tests.csproj
 ├── ControllerTests
 │   └── TerritoriesControllerTests.cs
+├── ForTestsOnly_Should_be_removed
+│   └── Class1.cs
 ├── ServiceTests
 │   └── TerritoryServiceTests.cs
 └── ValidatorTests
     └── TerritoryValidatorTests.cs
 
-4 directories, 4 files
+5 directories, 5 files
