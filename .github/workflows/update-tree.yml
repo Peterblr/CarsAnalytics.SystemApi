@@ -15,25 +15,17 @@ jobs:
       - name: Install tree
         run: sudo apt-get update && sudo apt-get install -y tree
 
-      # Generate tree for main API project
-      - name: Generate tree for SystemApi
+      # CarsAnalytics.SystemApi
+      - name: Generate tree for CarsAnalytics.SystemApi
         run: |
-          tree CarsAnalytics.SystemApi \
-            -a -I "bin|obj|Migrations" \
-            > tree_api_full.txt
+          echo "CarsAnalytics.SystemApi" > tree_api.txt
+          tree CarsAnalytics.SystemApi -a -I "bin|obj|Migrations" >> tree_api.txt
 
-          grep -E "\.cs$|Controllers|DTO|Domain|Services" tree_api_full.txt \
-            > tree_api.txt
-
-      # Generate tree for Tests project
-      - name: Generate tree for Tests
+      # CarsAnalytics.SystemApi.Tests
+      - name: Generate tree for CarsAnalytics.SystemApi.Tests
         run: |
-          tree CarsAnalytics.SystemApi.Tests \
-            -a -I "bin|obj" \
-            > tree_tests_full.txt
-
-          grep -E "\.cs$|Unit|Integration" tree_tests_full.txt \
-            > tree_tests.txt
+          echo "CarsAnalytics.SystemApi.Tests" > tree_tests.txt
+          tree CarsAnalytics.SystemApi.Tests -a -I "bin|obj" >> tree_tests.txt
 
       # Combine both trees into one file
       - name: Combine trees
