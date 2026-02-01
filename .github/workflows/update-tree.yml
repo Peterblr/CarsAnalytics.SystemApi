@@ -15,26 +15,24 @@ jobs:
       - name: Install tree
         run: sudo apt-get update && sudo apt-get install -y tree
 
-      # CarsAnalytics.SystemApi
+      # Generate tree for CarsAnalytics.SystemApi
       - name: Generate tree for CarsAnalytics.SystemApi
         run: |
-          echo "CarsAnalytics.SystemApi" > tree_api.txt
-          tree CarsAnalytics.SystemApi -a -I "bin|obj|Migrations" >> tree_api.txt
+          echo "## CarsAnalytics.SystemApi" > filtered_tree.txt
+          tree CarsAnalytics.SystemApi \
+            -a \
+            -I "bin|obj|Migrations|*.user|*.cache" \
+            >> filtered_tree.txt
 
-      # CarsAnalytics.SystemApi.Tests
+      # Generate tree for CarsAnalytics.SystemApi.Tests
       - name: Generate tree for CarsAnalytics.SystemApi.Tests
         run: |
-          echo "CarsAnalytics.SystemApi.Tests" > tree_tests.txt
-          tree CarsAnalytics.SystemApi.Tests -a -I "bin|obj" >> tree_tests.txt
-
-      # Combine both trees into one file
-      - name: Combine trees
-        run: |
-          echo "## CarsAnalytics.SystemApi" > filtered_tree.txt
-          cat tree_api.txt >> filtered_tree.txt
           echo "" >> filtered_tree.txt
           echo "## CarsAnalytics.SystemApi.Tests" >> filtered_tree.txt
-          cat tree_tests.txt >> filtered_tree.txt
+          tree CarsAnalytics.SystemApi.Tests \
+            -a \
+            -I "bin|obj|*.user|*.cache" \
+            >> filtered_tree.txt
 
       # Insert into README.md
       - name: Insert into README.md
