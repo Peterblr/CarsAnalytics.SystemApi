@@ -27,4 +27,17 @@ public interface ITerritoryService
     /// Returns 204 No Content if deleted, 404 Not Found if no record exists. 
     /// </returns> 
     Task<ApiResponse<bool>> DeleteManyByCodesAsync(IEnumerable<string> codes);
+
+    /// <summary>
+    /// Updates multiple territories in the system.
+    /// </summary>
+    /// <param name="dtos">
+    /// A collection of <see cref="TerritoryDto"/> objects containing updated values.
+    /// Each territory is identified by its unique <c>Code</c>.
+    /// </param>
+    /// <returns>
+    /// A response containing the updated territories.
+    /// Territories that do not exist will not be included in the result.
+    /// </returns>
+    Task<ApiResponse<IEnumerable<TerritoryDto>>> UpdateManyInternalAsync(IEnumerable<TerritoryDto> dtos);
 }

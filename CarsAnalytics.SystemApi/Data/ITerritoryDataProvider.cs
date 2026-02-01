@@ -25,4 +25,17 @@ public interface ITerritoryDataProvider
     /// <param name="code">The territory code (e.g., "CA", "NY").</param> 
     /// <returns>The number of records affected (0 if no territory was found with the given code).</returns>
     Task<int> DeleteManyByCodesAsync(IEnumerable<string> codes);
+
+    /// <summary>
+    /// Updates multiple territories in the data store.
+    /// </summary>
+    /// <param name="territories">
+    /// A collection of <see cref="Territory"/> objects containing updated values.
+    /// Each territory is identified by its unique <c>Code</c>.
+    /// </param>
+    /// <returns>
+    /// A collection of updated <see cref="Territory"/> objects.  
+    /// Territories that were not found will not be included in the result.
+    /// </returns>
+    Task<IEnumerable<Territory>> UpdateManyInternalAsync(IEnumerable<Territory> territories);
 }

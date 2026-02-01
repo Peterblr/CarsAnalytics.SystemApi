@@ -167,4 +167,128 @@ public class TerritoryServiceTests
         Assert.That(response.Data, Is.True);
         Assert.That(response.Message, Does.Contain("Deleted 2 territories successfully"));
     }
+
+    [Test]
+    public async Task UpdateManyInternalAsync_ShouldReturnBadRequest_WhenInputIsInvalid()
+    {
+        // Arrange
+        var invalidDtos = new List<TerritoryDto> { null };
+
+        // Act
+        var response = await _service.UpdateManyInternalAsync(invalidDtos);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Message.Should().Be("At least one territory is required");
+    }
+
+    [Test]
+    public async Task UpdateManyInternalAsync_ShouldReturnNotFound_WhenTerritoriesDoNotExist()
+    {
+        // Arrange
+        var dtos = new List<TerritoryDto>
+        {
+            new TerritoryDto { Code = "AA", Name = "Name", RegionCode = "US" }
+        };
+
+        _provider.GetByRegionAsync("US").Returns(new List<Territory>());
+
+        // Act
+        var response = await _service.UpdateManyInternalAsync(dtos);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.Message.Should().Contain("Some territories do not exist");
+    }
+
+    [Test]
+    public async Task UpdateManyInternalAsync_ShouldReturnInternalServerError_WhenProviderReturnsEmptyList()
+    {
+        // Arrange
+        var dtos = new List<TerritoryDto>
+        {
+            new TerritoryDto { Code = "AA", Name = "Name", RegionCode = "US" }
+        };
+
+        _provider.GetByRegionAsync("US").Returns(new List<Territory>
+        {
+            new Territory { Code = "AA", Name = "Old", RegionCode = "US" }
+        });
+
+        _provider.UpdateManyInternalAsync(Arg.Any<IEnumerable<Territory>>())
+                 .Returns(new List<Territory>()); 
+
+        // Act
+        var response = await _service.UpdateManyInternalAsync(dtos);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
+        response.Message.Should().Be("Failed to update territories");
+    }
+
+    [Test]
+    public async Task UpdateManyInternalAsync_ShouldReturnSuccess_WhenUpdateIsSuccessful()
+    {
+        // Arrange
+        var dtos = new List<TerritoryDto>
+        {
+            new TerritoryDto { Code = "AA", Name = "NewName", RegionCode = "US" }
+        };
+
+        var existing = new List<Territory>
+        {
+            new Territory { Code = "AA", Name = "OldName", RegionCode = "US" }
+        };
+
+        var updated = new List<Territory>
+        {
+            new Territory { Code = "AA", Name = "NewName", RegionCode = "US" }
+        };
+
+        _provider.GetByRegionAsync("US").Returns(existing);
+        _provider.UpdateManyInternalAsync(Arg.Any<IEnumerable<Territory>>()).Returns(updated);
+
+        // Act
+        var response = await _service.UpdateManyInternalAsync(dtos);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.Data.Should().BeEquivalentTo(updated);
+        response.Message.Should().Contain("updated successfully");
+    }
+
+    [Test]
+    public async Task UpdateManyInternalAsync_ShouldMapDtosToEntitiesCorrectly()
+    {
+        // Arrange
+        var dtos = new List<TerritoryDto>
+        {
+            new TerritoryDto { Code = "AA", Name = "NewName", RegionCode = "US" }
+        };
+
+        _provider.GetByRegionAsync("US").Returns(new List<Territory>
+        {
+            new Territory { Code = "AA", Name = "OldName", RegionCode = "US" }
+        });
+
+        IEnumerable<Territory> capturedEntities = null;
+
+        _provider.UpdateManyInternalAsync(Arg.Do<IEnumerable<Territory>>(x => capturedEntities = x))
+                 .Returns(new List<Territory>
+                     {
+                     new Territory { Code = "AA", Name = "NewName", RegionCode = "US" }
+                     });
+
+        // Act
+        await _service.UpdateManyInternalAsync(dtos);
+
+        // Assert
+        capturedEntities.Should().NotBeNull();
+        capturedEntities.Should().HaveCount(1);
+
+        var entity = capturedEntities.First();
+        entity.Code.Should().Be("AA");
+        entity.Name.Should().Be("NewName");
+        entity.RegionCode.Should().Be("US");
+    }
 }

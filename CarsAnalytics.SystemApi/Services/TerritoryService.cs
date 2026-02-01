@@ -92,6 +92,56 @@ public class TerritoryService(ITerritoryDataProvider provider) : ITerritoryServi
         return response;
     }
 
+    public async Task<ApiResponse<IEnumerable<TerritoryDto>>> UpdateManyInternalAsync(IEnumerable<TerritoryDto> dtos)
+    {
+        var response = ApiResponse<IEnumerable<TerritoryDto>>.CreateFailureResponse(string.Empty);
+
+        if (!await ValidateInput(dtos, response))
+            return response;
+
+        var regionCode = dtos.First().RegionCode;
+        var existing = await provider.GetByRegionAsync(regionCode);
+
+        var existingCodes = existing.Select(e => e.Code).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var missing = dtos.Where(d => !existingCodes.Contains(d.Code)).ToList();
+        if (missing.Any())
+        {
+            response.StatusCode = HttpStatusCode.NotFound;
+            response.Message = "Some territories do not exist: " +
+                string.Join("; ", missing.Select(m => m.Code));
+            return response;
+        }
+
+        var entities = dtos.Select(dto => new Territory
+        {
+            Code = dto.Code,
+            Name = dto.Name,
+            RegionCode = dto.RegionCode
+        });
+
+        var updated = await provider.UpdateManyInternalAsync(entities);
+
+        if (!updated.Any())
+        {
+            return ApiResponse<IEnumerable<TerritoryDto>>.CreateFailureResponse(
+                "Failed to update territories",
+                HttpStatusCode.InternalServerError
+            );
+        }
+
+        var result = updated.Select(t => new TerritoryDto
+        {
+            Code = t.Code,
+            Name = t.Name,
+            RegionCode = t.RegionCode
+        });
+
+        var success = ApiResponse<IEnumerable<TerritoryDto>>.CreateSuccessResponse(result);
+        success.Message = $"Territories updated successfully ({result.Count()} records)";
+        return success;
+    }
+
     private async Task<bool> ValidateInput(IEnumerable<TerritoryDto> dtos, ApiResponse<IEnumerable<TerritoryDto>> response)
     {
         if (dtos.Any(x => x is null))
