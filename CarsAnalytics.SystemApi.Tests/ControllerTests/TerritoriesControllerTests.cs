@@ -221,7 +221,7 @@ public class TerritoriesControllerTests
         // Arrange
         var dtos = new List<TerritoryDto>
         {
-            new TerritoryDto { Code = "AA", Name = "NewName", RegionCode = "US" }
+            new TerritoryDto { Code = "AA", Name = "NewNameNew", RegionCode = "US" }
         };
 
         var successResponse = ApiResponse<IEnumerable<TerritoryDto>>

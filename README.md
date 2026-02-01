@@ -3,4 +3,23 @@
 ## 📂 Project Structure
 
 <!-- PROJECT_TREE_START -->
+│   ├── Controllers  
+│   │   └── TerritoriesController.cs  
+│   │   ├── ITerritoryDataProvider.cs  
+│   │   └── TerritoryDataProvider.cs  
+│   ├── Domain  
+│   │   ├── CarModel.cs  
+│   │   ├── Region.cs  
+│   │   ├── Territory.cs  
+│   │   └── TerritoryCarStat.cs  
+│   │   └── TerritoryDto.cs  
+│   │   └── DatabaseConstraints.cs  
+│   ├── Program.cs  
+│   ├── Services  
+│   │   ├── ITerritoryService.cs  
+│   │   └── TerritoryService.cs  
+│   │   └── TerritoryValidator.cs  
+│   │   └── TerritoriesControllerTests.cs  
+│   │   └── TerritoryServiceTests.cs  
+│       └── TerritoryValidatorTests.cs  
 <!-- PROJECT_TREE_END -->

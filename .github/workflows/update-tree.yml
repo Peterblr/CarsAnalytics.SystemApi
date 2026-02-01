@@ -41,4 +41,4 @@ jobs:
         with:
           commit_message: "Update project structure"
           file_pattern: README.md
-	  branch: develop
+          branch: develop
