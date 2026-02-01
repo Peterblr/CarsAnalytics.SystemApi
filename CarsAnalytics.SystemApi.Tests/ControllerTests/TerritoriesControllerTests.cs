@@ -142,4 +142,104 @@ public class TerritoriesControllerTests
         Assert.That(response.Data, Is.True);
         Assert.That(response.Message, Does.Contain("Deleted 2 territories successfully"));
     }
+
+    [Test]
+    public async Task UpdateMany_ShouldReturnBadRequest_WhenInputIsInvalid()
+    {
+        // Arrange
+        var invalidDtos = new List<TerritoryDto> { null };
+
+        var failureResponse = ApiResponse<IEnumerable<TerritoryDto>>
+            .CreateFailureResponse("At least one territory is required", HttpStatusCode.BadRequest);
+
+        _service.UpdateManyInternalAsync(invalidDtos).Returns(failureResponse);
+
+        // Act
+        var result = await _controller.UpdateMany(invalidDtos) as ObjectResult;
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.BadRequest));
+
+        var response = (ApiResponse<IEnumerable<TerritoryDto>>)result.Value;
+        Assert.That(response.Message, Is.EqualTo("At least one territory is required"));
+    }
+
+    [Test]
+    public async Task UpdateMany_ShouldReturnNotFound_WhenSomeTerritoriesDoNotExist()
+    {
+        // Arrange
+        var dtos = new List<TerritoryDto>
+        {
+            new TerritoryDto { Code = "AA", Name = "Name", RegionCode = "US" }
+        };
+
+        var failureResponse = ApiResponse<IEnumerable<TerritoryDto>>
+            .CreateFailureResponse("Some territories do not exist: AA", HttpStatusCode.NotFound);
+
+        _service.UpdateManyInternalAsync(dtos).Returns(failureResponse);
+
+        // Act
+        var result = await _controller.UpdateMany(dtos) as ObjectResult;
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.NotFound));
+
+        var response = (ApiResponse<IEnumerable<TerritoryDto>>)result.Value;
+        Assert.That(response.Message, Does.Contain("Some territories do not exist"));
+    }
+
+    [Test]
+    public async Task UpdateMany_ShouldReturnInternalServerError_WhenUpdateFails()
+    {
+        // Arrange
+        var dtos = new List<TerritoryDto>
+        {
+            new TerritoryDto { Code = "AA", Name = "Name", RegionCode = "US" }
+        };
+
+        var failureResponse = ApiResponse<IEnumerable<TerritoryDto>>
+            .CreateFailureResponse("Failed to update territories", HttpStatusCode.InternalServerError);
+
+        _service.UpdateManyInternalAsync(dtos).Returns(failureResponse);
+
+        // Act
+        var result = await _controller.UpdateMany(dtos) as ObjectResult;
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.InternalServerError));
+
+        var response = (ApiResponse<IEnumerable<TerritoryDto>>)result.Value;
+        Assert.That(response.Message, Is.EqualTo("Failed to update territories"));
+    }
+
+    [Test]
+    public async Task UpdateMany_ShouldReturnOk_WhenUpdateSucceeds()
+    {
+        // Arrange
+        var dtos = new List<TerritoryDto>
+        {
+            new TerritoryDto { Code = "AA", Name = "NewName", RegionCode = "US" }
+        };
+
+        var successResponse = ApiResponse<IEnumerable<TerritoryDto>>
+            .CreateSuccessResponse(dtos, null, HttpStatusCode.OK);
+
+        successResponse.Message = "Territories updated successfully (1 records)";
+
+        _service.UpdateManyInternalAsync(dtos).Returns(successResponse);
+
+        // Act
+        var result = await _controller.UpdateMany(dtos) as ObjectResult;
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
+
+        var response = (ApiResponse<IEnumerable<TerritoryDto>>)result.Value;
+        Assert.That(response.Data, Is.EquivalentTo(dtos));
+        Assert.That(response.Message, Does.Contain("updated successfully"));
+    }
 }

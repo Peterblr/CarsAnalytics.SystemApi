@@ -10,6 +10,7 @@
     <PackageReference Include="API-Response-Wrapper" Version="1.0.0" />
     <PackageReference Include="AutoMapper" Version="16.0.0" />
     <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.1" />

@@ -58,4 +58,39 @@ public class TerritoryDataProvider(IConfiguration configuration) : ITerritoryDat
         var affected = await con.ExecuteAsync(DeleteQuery, new { codes });
         return affected;
     }
+
+    public async Task<IEnumerable<Territory>> UpdateManyInternalAsync(IEnumerable<Territory> territories)
+    {
+        const string UpdateQuery = @"
+            UPDATE Territories
+            SET Code = @Code,
+                Name = @Name,
+                RegionCode = @RegionCode
+            OUTPUT INSERTED.*
+            WHERE Code = @Code;
+        ";
+
+        using var con = new SqlConnection(GetConnectionString());
+        await con.OpenAsync();
+
+        using var transaction = await con.BeginTransactionAsync();
+
+        var updated = new List<Territory>();
+
+        foreach (var t in territories)
+        {
+            var result = await con.QuerySingleOrDefaultAsync<Territory>(
+                UpdateQuery,
+                t,
+                transaction
+            );
+
+            if (result != null)
+                updated.Add(result);
+        }
+
+        await transaction.CommitAsync();
+
+        return updated;
+    }
 }

@@ -29,10 +29,15 @@ public class TerritoriesController(ITerritoryService territoryService) : Control
         return StatusCode((int)apiResponse.StatusCode, apiResponse);
     }
 
-    // PUT api/<TerritoriesController>/5
-    [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
+    [HttpPut]
+    [SwaggerResponse(StatusCodes.Status200OK, "Territories updated", typeof(ApiResponse<IEnumerable<TerritoryDto>>))]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid input")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Some territories do not exist")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Failed to update territories")]
+    public async Task<IActionResult> UpdateMany([FromBody] IEnumerable<TerritoryDto> dtos)
     {
+        var apiResponse = await territoryService.UpdateManyInternalAsync(dtos);
+        return StatusCode((int)apiResponse.StatusCode, apiResponse);
     }
 
     [HttpDelete]
