@@ -15,13 +15,36 @@ jobs:
       - name: Install tree
         run: sudo apt-get update && sudo apt-get install -y tree
 
-      - name: Generate full tree
-        run: tree -a -I ".git|.github|bin|obj|Migrations" > full_tree.txt
-
-      - name: Filter only important files
+      # Generate tree for main API project
+      - name: Generate tree for SystemApi
         run: |
-          grep -E "\.cs$|Controllers|DTO|Domain|Services" full_tree.txt > filtered_tree.txt
+          tree CarsAnalytics.SystemApi \
+            -a -I "bin|obj|Migrations" \
+            > tree_api_full.txt
 
+          grep -E "\.cs$|Controllers|DTO|Domain|Services" tree_api_full.txt \
+            > tree_api.txt
+
+      # Generate tree for Tests project
+      - name: Generate tree for Tests
+        run: |
+          tree CarsAnalytics.SystemApi.Tests \
+            -a -I "bin|obj" \
+            > tree_tests_full.txt
+
+          grep -E "\.cs$|Unit|Integration" tree_tests_full.txt \
+            > tree_tests.txt
+
+      # Combine both trees into one file
+      - name: Combine trees
+        run: |
+          echo "## CarsAnalytics.SystemApi" > filtered_tree.txt
+          cat tree_api.txt >> filtered_tree.txt
+          echo "" >> filtered_tree.txt
+          echo "## CarsAnalytics.SystemApi.Tests" >> filtered_tree.txt
+          cat tree_tests.txt >> filtered_tree.txt
+
+      # Insert into README.md
       - name: Insert into README.md
         run: |
           START="<!-- PROJECT_TREE_START -->"
@@ -36,6 +59,7 @@ jobs:
 
           mv README_new.md README.md
 
+      # Commit changes
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
