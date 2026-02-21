@@ -3,8 +3,11 @@ CarsAnalytics.SystemApi
 ├── CarsAnalytics.SystemApi.csproj
 ├── CarsAnalytics.SystemApi.http
 ├── Controllers
+│   ├── CarModelController.cs
 │   └── TerritoriesController.cs
 ├── Data
+│   ├── CarModelDataProvider.cs
+│   ├── ICarModelDataProvider.cs
 │   ├── ITerritoryDataProvider.cs
 │   └── TerritoryDataProvider.cs
 ├── Domain
@@ -13,6 +16,7 @@ CarsAnalytics.SystemApi
 │   ├── Territory.cs
 │   └── TerritoryCarStat.cs
 ├── Dto
+│   ├── CarModelDto.cs
 │   └── TerritoryDto.cs
 ├── Helpers
 │   └── DatabaseConstraints.cs
@@ -20,14 +24,17 @@ CarsAnalytics.SystemApi
 ├── Properties
 │   └── launchSettings.json
 ├── Services
+│   ├── CarModelService.cs
+│   ├── ICarModelService.cs
 │   ├── ITerritoryService.cs
 │   └── TerritoryService.cs
 ├── Validators
+│   ├── CarModelValidator.cs
 │   └── TerritoryValidator.cs
 ├── appsettings.Development.json
 └── appsettings.json
 
-9 directories, 18 files
+9 directories, 25 files
 
 ## CarsAnalytics.SystemApi.Tests
 CarsAnalytics.SystemApi.Tests
@@ -39,6 +46,7 @@ CarsAnalytics.SystemApi.Tests
 ├── ServiceTests
 │   └── TerritoryServiceTests.cs
 └── ValidatorTests
+    ├── CarModelValidatorTests.cs
     └── TerritoryValidatorTests.cs
 
-5 directories, 5 files
+5 directories, 6 files
