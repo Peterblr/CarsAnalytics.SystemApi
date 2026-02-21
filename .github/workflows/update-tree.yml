@@ -18,41 +18,26 @@ jobs:
       # Generate tree for CarsAnalytics.SystemApi
       - name: Generate tree for CarsAnalytics.SystemApi
         run: |
-          echo "## CarsAnalytics.SystemApi" > filtered_tree.txt
+          echo "## CarsAnalytics.SystemApi" > ProjectStructure.txt
           tree CarsAnalytics.SystemApi \
             -a \
             -I "bin|obj|Migrations|*.user|*.cache" \
-            >> filtered_tree.txt
+            >> ProjectStructure.txt
 
       # Generate tree for CarsAnalytics.SystemApi.Tests
       - name: Generate tree for CarsAnalytics.SystemApi.Tests
         run: |
-          echo "" >> filtered_tree.txt
-          echo "## CarsAnalytics.SystemApi.Tests" >> filtered_tree.txt
+          echo "" >> ProjectStructure.txt
+          echo "## CarsAnalytics.SystemApi.Tests" >> ProjectStructure.txt
           tree CarsAnalytics.SystemApi.Tests \
             -a \
             -I "bin|obj|*.user|*.cache" \
-            >> filtered_tree.txt
-
-      # Insert into README.md
-      - name: Insert into README.md
-        run: |
-          START="<!-- PROJECT_TREE_START -->"
-          END="<!-- PROJECT_TREE_END -->"
-          TREE_CONTENT=$(sed 's/$/  /' filtered_tree.txt)
-
-          awk -v start="$START" -v end="$END" -v content="$TREE_CONTENT" '
-            $0 ~ start { print; print content; found=1; next }
-            $0 ~ end { found=0 }
-            !found
-          ' README.md > README_new.md
-
-          mv README_new.md README.md
+            >> ProjectStructure.txt
 
       # Commit changes to the SAME branch where workflow was triggered
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "Update project structure"
-          file_pattern: README.md
+          file_pattern: ProjectStructure.txt
           branch: ${{ github.ref_name }}
