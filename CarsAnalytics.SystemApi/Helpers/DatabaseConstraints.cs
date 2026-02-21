@@ -10,4 +10,7 @@ public static class DatabaseConstraints
 
     ///<summary>Database validation Constants for 10 character</summary>
     public const int DbDConstraint10Char = 10;
+
+    ///<summary>Database validation Constants for 50 character</summary>
+    public const int DbDConstraint50Char = 50;
 }

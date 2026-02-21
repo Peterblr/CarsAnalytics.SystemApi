@@ -1,5 +1,8 @@
 using CarsAnalytics.SystemApi.Data;
+using CarsAnalytics.SystemApi.DataProviders;
+using CarsAnalytics.SystemApi.DataProviders.Interfaces;
 using CarsAnalytics.SystemApi.Services;
+using CarsAnalytics.SystemApi.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,9 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // DataProvider
 builder.Services.AddScoped<ITerritoryDataProvider, TerritoryDataProvider>();
+builder.Services.AddScoped<ICarModelDataProvider, CarModelDataProvider>();
 
 // Service
 builder.Services.AddScoped<ITerritoryService, TerritoryService>();
+builder.Services.AddScoped<ICarModelService, CarModelService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
